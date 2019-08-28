@@ -1,0 +1,127 @@
+from funciones import*
+import random
+import math
+
+class Entorno:
+    def __init__(self,totalX,totalY,dirt_rate):
+        self.totalX= totalX
+        self.totalY = totalY
+        self.dirt_rate = dirt_rate
+        self.peterX = random.randint(0,totalX-1)
+        self.peterY = random.randint(0,totalY-1)
+        self.world = [[0]*totalX for i in range(totalY)]
+        self.acciones = 10000
+        self.rendimiento = 0
+
+    def mundo(self):
+        total_casillas = self.totalX * self.totalY
+        cant_sucias = (self.dirt_rate * total_casillas)/100
+        cant_sucias = redondeo(cant_sucias)
+        while(cant_sucias > 0):
+            new_x = random.randint(0,self.totalX-1)
+            new_y = random.randint(0,self.totalY-1)
+            if(self.world[new_x][new_y] != 1):
+                self.world[new_x][new_y] = 1
+                cant_sucias = cant_sucias-1
+
+    def clean(self):
+        self.world[self.peterX][self.peterY] = 0
+        self.rendimiento = self.rendimiento+ 1
+
+    def mover(self, posX, posY):
+        if (posX >= 0 and posX < self.sizeX) and (posY >= 0 and posY < self.sizeY):
+            self.agentX = posX
+            self.agentY = posY
+            return True
+        return False
+
+    def accept_action(self, *args):
+        self.acciones -= 1
+        if len(args) == 1:
+            return self.is_dirty()
+        elif len(args) == 2:
+            new_x, new_y = args
+            return self.mover(new_x, new_y)
+        else:
+            print("Numero de parametros incorrecto")
+
+    def is_dirty(self):
+        if (self.world[self.agentX][self.agentY] == 1):
+            return True
+        return False
+
+
+    def get_perfomance(self):
+        total_casillas = self.totalXX * self.totalYY
+        cant_sucias = (self.dirt_rate * total_casillas) / 100
+        cant_sucias = redondeo(cant_sucias)
+        ptje_limpio = self.rendimiento * 100 / cant_sucias
+        print(" Peter limpio aproximadamente un", round(ptje_limpio, 2), "%")
+
+    def print_enviroment(self):
+        lenx = self.totalX
+        leny = self.totalY
+        fin = ""
+        valor = ""
+        for i in range(0, lenx):
+            print("[", end="")
+            for j in range(0, leny):
+                if j != leny - 1:
+                    fin = ","
+                else:
+                    fin = "]"
+                if i == self.agentX and j == self.agentY:
+                    valor = "*"
+                else:
+                    valor = self.world[i][j]
+
+                print(valor, end=fin)
+            print("")
+        # aux = input("enter para seguir")
+        print("-----------------------------")
+
+
+class P3ter:
+    def __init__(self, entorno):
+        self.entorno = entorno
+        self.posicionX = entorno.peterX
+        self.posicionY = entorno.peterY
+        self.totalX = entorno.largoX
+        self.totalY = entorno.anchoY
+        self.sucio = False;
+
+    def up(self):
+        self.entorno.accept_action(self.entorno.peterX - 1, self.entorno.peterY)
+        print("P3ter arriba va")
+
+    def down(self):
+        self.entorno.accept_action(self.entorno.peterX + 1, self.entorno.peterY)
+        print("P3ter abajo va")
+
+    def left(self):
+        self.entorno.accept_action(self.entorno.peterX, self.entorno.peterY - 1)
+        print("P3ter izquierda va")
+
+    def right(self):
+        self.entorno.accept_action(self.entorno.peterX, self.entorno.peterY + 1)
+        print("P3ter derecha va")
+
+    def stand(self):
+        print("P3ter espera")
+        self.entorno.accept_action(self.entorno.peterX, self.entorno.peterY)
+
+    def suck(self):
+        self.entorno.clean()
+        print("P3ter limpia")
+
+    def perspective(self):
+        self.posicionX = self.entorno.peterX
+        self.posicionY = self.entorno.peterY
+        self.sucio = self.entorno.is_dirty()
+
+    def think(self):
+        while (self.entorno.acciones > 0):
+            self.perspective()
+            if (self.sucio):
+                self.suck()
+            else:
