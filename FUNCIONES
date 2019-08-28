@@ -1,0 +1,26 @@
+def print_enviroment(self):
+    lenx = self.sizeX
+    leny = self.sizeY
+    fin = ""
+    valor = ""
+    for i in range(0, lenx):
+        print("[", end="")
+        for j in range(0, leny):
+            if j != leny - 1:
+                fin = ","
+            else:
+                fin = "]"
+            if i == self.agentX and j == self.agentY:
+                valor = "*"
+            else:
+                valor = self.world[i][j]
+
+            print(valor, end=fin)
+        print("")
+    # aux = input("enter para seguir")
+    print("-----------------------------")
+
+def redondeo(self, x):
+    if (math.floor(x) + 0.5) < x:
+        return math.ceil(x)
+    return math.floor(x)
